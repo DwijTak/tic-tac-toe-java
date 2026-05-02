@@ -14,9 +14,7 @@ public class TicTacToe {
 
     // UC4
     public static int[] getPosition(int slot) {
-        int row = (slot - 1) / 3;
-        int col = (slot - 1) % 3;
-        return new int[]{row, col};
+        return new int[]{(slot - 1) / 3, (slot - 1) % 3};
     }
 
     // UC5
@@ -29,33 +27,35 @@ public class TicTacToe {
         board[row][col] = symbol;
     }
 
-    // UC7: Computer move
+    // UC7
     public static void computerMove(char[][] board, char symbol) {
-
-        int slot, row, col;
-
         while (true) {
-
-            slot = rand.nextInt(9) + 1; // 1–9
+            int slot = rand.nextInt(9) + 1;
             int[] pos = getPosition(slot);
-            row = pos[0];
-            col = pos[1];
 
-            if (isValidMove(board, row, col)) {
-                placeMove(board, row, col, symbol);
+            if (isValidMove(board, pos[0], pos[1])) {
+                placeMove(board, pos[0], pos[1], symbol);
                 System.out.println("Computer chose slot: " + slot);
                 break;
             }
         }
     }
 
+    // Check if board full (draw condition)
+    public static boolean isBoardFull(char[][] board) {
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++)
+                if (board[i][j] == '-')
+                    return false;
+        return true;
+    }
+
     // Print board
     public static void printBoard(char[][] board) {
         System.out.println("\nBoard:");
         for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
+            for (int j = 0; j < 3; j++)
                 System.out.print(board[i][j] + " ");
-            }
             System.out.println();
         }
     }
@@ -64,12 +64,12 @@ public class TicTacToe {
 
         char[][] board = new char[3][3];
 
-        // UC1
+        // Initialize board
         for (int i = 0; i < 3; i++)
             for (int j = 0; j < 3; j++)
                 board[i][j] = '-';
 
-        // UC2
+        // Toss
         boolean userTurn = rand.nextInt(2) == 0;
 
         char userSymbol = userTurn ? 'X' : 'O';
@@ -77,21 +77,37 @@ public class TicTacToe {
 
         System.out.println(userTurn ? "User starts" : "Computer starts");
 
-        printBoard(board);
+        // 🔥 UC8 GAME LOOP
+        while (true) {
 
-        // User move
-        int slot = getUserInput();
-        int[] pos = getPosition(slot);
+            printBoard(board);
 
-        if (isValidMove(board, pos[0], pos[1])) {
-            placeMove(board, pos[0], pos[1], userSymbol);
+            if (userTurn) {
+                System.out.println("\nUser Turn");
+
+                int slot = getUserInput();
+                int[] pos = getPosition(slot);
+
+                if (isValidMove(board, pos[0], pos[1])) {
+                    placeMove(board, pos[0], pos[1], userSymbol);
+                    userTurn = false; // switch turn
+                } else {
+                    System.out.println("Invalid move! Try again.");
+                }
+
+            } else {
+                System.out.println("\nComputer Turn");
+
+                computerMove(board, computerSymbol);
+                userTurn = true; // switch turn
+            }
+
+            // Stop if board full (draw for now)
+            if (isBoardFull(board)) {
+                printBoard(board);
+                System.out.println("\nGame Draw!");
+                break;
+            }
         }
-
-        printBoard(board);
-
-        // Computer move (UC7)
-        computerMove(board, computerSymbol);
-
-        printBoard(board);
     }
 }
