@@ -72,8 +72,8 @@ public class TicTacToe {
         return false;
     }
 
-    // Check draw
-    public static boolean isBoardFull(char[][] board) {
+    // UC10: Draw check
+    public static boolean isDraw(char[][] board) {
         for (int i = 0; i < 3; i++)
             for (int j = 0; j < 3; j++)
                 if (board[i][j] == '-')
@@ -109,7 +109,7 @@ public class TicTacToe {
         System.out.println(userTurn ? "User starts" : "Computer starts");
         System.out.println("User: " + userSymbol + " | Computer: " + computerSymbol);
 
-        // Game loop
+        // GAME LOOP
         while (true) {
 
             printBoard(board);
@@ -151,9 +151,10 @@ public class TicTacToe {
                 userTurn = true;
             }
 
-            if (isBoardFull(board)) {
+            // UC10: Draw condition
+            if (isDraw(board)) {
                 printBoard(board);
-                System.out.println("\nGame Draw!");
+                System.out.println("\nGame Draw! 🤝");
                 break;
             }
         }
