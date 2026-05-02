@@ -4,6 +4,7 @@ import java.util.Scanner;
 public class TicTacToe {
 
     static Scanner input = new Scanner(System.in);
+    static Random rand = new Random();
 
     // UC3
     public static int getUserInput() {
@@ -23,12 +24,32 @@ public class TicTacToe {
         return (row >= 0 && row < 3 && col >= 0 && col < 3 && board[row][col] == '-');
     }
 
-    // UC6: Place move
+    // UC6
     public static void placeMove(char[][] board, int row, int col, char symbol) {
         board[row][col] = symbol;
     }
 
-    // Helper to print board
+    // UC7: Computer move
+    public static void computerMove(char[][] board, char symbol) {
+
+        int slot, row, col;
+
+        while (true) {
+
+            slot = rand.nextInt(9) + 1; // 1–9
+            int[] pos = getPosition(slot);
+            row = pos[0];
+            col = pos[1];
+
+            if (isValidMove(board, row, col)) {
+                placeMove(board, row, col, symbol);
+                System.out.println("Computer chose slot: " + slot);
+                break;
+            }
+        }
+    }
+
+    // Print board
     public static void printBoard(char[][] board) {
         System.out.println("\nBoard:");
         for (int i = 0; i < 3; i++) {
@@ -49,33 +70,28 @@ public class TicTacToe {
                 board[i][j] = '-';
 
         // UC2
-        Random rand = new Random();
         boolean userTurn = rand.nextInt(2) == 0;
 
         char userSymbol = userTurn ? 'X' : 'O';
+        char computerSymbol = userTurn ? 'O' : 'X';
 
         System.out.println(userTurn ? "User starts" : "Computer starts");
 
         printBoard(board);
 
-        // UC3 + UC4
+        // User move
         int slot = getUserInput();
         int[] pos = getPosition(slot);
-        int row = pos[0];
-        int col = pos[1];
 
-        // UC5 + UC6
-        if (isValidMove(board, row, col)) {
-
-            placeMove(board, row, col, userSymbol);
-
-            System.out.println("Move placed ✅");
-
-        } else {
-            System.out.println("Invalid move ❌");
+        if (isValidMove(board, pos[0], pos[1])) {
+            placeMove(board, pos[0], pos[1], userSymbol);
         }
 
-        // Show updated board
+        printBoard(board);
+
+        // Computer move (UC7)
+        computerMove(board, computerSymbol);
+
         printBoard(board);
     }
 }
